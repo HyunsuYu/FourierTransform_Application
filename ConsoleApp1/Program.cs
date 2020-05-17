@@ -2,7 +2,7 @@
 
 namespace ConsoleApp1
 {
-    sealed public class Fourier
+    sealed public class Fourier : IDisposable
     {
         private struct FrequencyFunction
         {
@@ -76,9 +76,18 @@ namespace ConsoleApp1
                 Console.WriteLine("");
             }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(true);
+        }
 
         //  private method
         ~Fourier()
+        {
+            Dispose(false);
+        }
+        private void Dispose(bool flag)
         {
             mnodeInfos = null;
             mnodeVectors = null;
@@ -169,6 +178,7 @@ namespace ConsoleApp1
         {
             Fourier fourier = new Fourier(25, 25, 15, 10, 6, 0.001, -5);
             fourier.Print();
+            fourier.Dispose();
         }
     }
 }
