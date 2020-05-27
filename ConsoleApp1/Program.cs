@@ -178,6 +178,7 @@ namespace ConsoleApp1
         {
             Fourier fourier = new Fourier(25, 25, 15, 10, 6, 0.001, -5);
             fourier.Print();
+            Console.ReadLine();
             fourier.Dispose();
         }
     }
