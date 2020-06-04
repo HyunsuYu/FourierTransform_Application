@@ -31,6 +31,8 @@ namespace ConsoleApp1
         private double mfrequency;
         private int mfirstN;
 
+        public int mcoord_x, mcoord_y;
+
         private const int MAP_LENGTH = 50;
         private const double PI2 = Math.PI * 2.0f;
 
@@ -44,6 +46,9 @@ namespace ConsoleApp1
             mmaxPeriod = maxPeriod;
             mfrequency = frequency;
             mfirstN = firstN;
+
+            mcoord_x = coord_x;
+            mcoord_y = coord_y;
 
             mnodeInfos = new FrequencyFunction[mmaxVectorNum];
             mnodeVectors = new NodeVector[mmaxVectorNum];
@@ -76,6 +81,37 @@ namespace ConsoleApp1
                 Console.WriteLine("");
             }
         }
+        public void NextDraw(double change)
+        {
+            System.Threading.Thread.Sleep(2000);
+            Console.Clear();
+
+            for (int i = 0; i < mmaxVectorNum; i++)
+            {
+                mnodeInfos[i].mamplitude += change;
+                mnodeInfos[i].mperiod += change;
+
+                mnodeVectors[i].mcenter_x = 0.0;
+                mnodeVectors[i].mcenter_y = 0.0;
+                mnodeVectors[i].mcurTime = 0.0;
+                mnodeVectors[i].mdot_x = 0.0;
+                mnodeVectors[i].mdot_y = 0.0;
+                mnodeVectors[i].mvector_x = 0.0;
+                mnodeVectors[i].mvector_y = 0.0;
+            }
+
+            for(int coord_y = 0; coord_y < MAP_LENGTH; coord_y++)
+            {
+                for(int coord_x = 0; coord_x < MAP_LENGTH; coord_x++)
+                {
+                    mmap[coord_y, coord_x] = 0;
+                }
+            }
+
+            MakeFourier(mcoord_x, mcoord_y);
+
+            Print();
+        }
         public void Dispose()
         {
             Dispose(true);
@@ -98,8 +134,8 @@ namespace ConsoleApp1
         {
             for (int i = 0; i < mmaxVectorNum; i++)
             {
-                mnodeInfos[i].mamplitude = mmaxAmplitude * random.NextDouble();
-                mnodeInfos[i].mperiod = mmaxPeriod * random.NextDouble();
+                mnodeInfos[i].mamplitude = random.NextDouble() * mmaxAmplitude;
+                mnodeInfos[i].mperiod = random.NextDouble() * mmaxPeriod;
             }
         }
         private void MakeFourier(int coord_x, int coord_y)
@@ -176,9 +212,14 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Fourier fourier = new Fourier(25, 25, 15, 10, 6, 0.001, -5);
+            Fourier fourier = new Fourier(25, 25, 7, 15, 5, 0.001, -3);
             fourier.Print();
-            Console.ReadLine();
+
+            for(int i = 0; i < 20; i++)
+            {
+                fourier.NextDraw(0.1);
+            }
+
             fourier.Dispose();
         }
     }
